@@ -12,13 +12,10 @@ def hierarchical_contrastive_loss(z1, z2, alpha=0, temporal_unit=0, beta=0.5, tr
         if alpha != 0:
             loss += alpha * instance_contrastive_loss(z1, z2)
         if d >= temporal_unit:
-            if 1 - alpha != 0:
-                loss += (1 - alpha) * temporal_contrastive_loss(z1, z2)
-                if trans_type == 'dct':
-                    loss += beta * freqency_loss(z1, z2)
-                elif trans_type == 'fft':
-                    loss += beta * periogram_loss(z1, z2)
-
+            if trans_type == 'dct':
+                loss += beta * freqency_loss(z1, z2)
+            elif trans_type == 'fft':
+                loss += beta * periogram_loss(z1, z2)
         d += 1
         z1 = F.max_pool1d(z1.transpose(1, 2), kernel_size=2).transpose(1, 2)
         z2 = F.max_pool1d(z2.transpose(1, 2), kernel_size=2).transpose(1, 2)
