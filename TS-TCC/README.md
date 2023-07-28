@@ -6,9 +6,6 @@
 
 
 ## Abstract
-<p align="center">
-<img src="misc/TS_TCC.png" width="400" class="center">
-</p>
 
 Learning decent representations from unlabeled time-series data with temporal dynamics is a very challenging task. In this paper, we propose an unsupervised <b>T</b>ime-<b>S</b>eries representation learning framework via <b>T</b>emporal and <b>C</b>ontextual <b>C</b>ontrasting (<b>TS-TCC</b>), to learn time-series representation from unlabeled data. First, the raw time-series data are transformed into two different yet correlated views by using weak and strong augmentations. Second, we propose a novel temporal contrasting module to learn <i>robust</i> temporal representations by designing a tough cross-view prediction task. Last, to further learn <i>discriminative</i> representations, we propose a contextual contrasting module built upon the contexts from the temporal contrasting module. It attempts to maximize the similarity among different contexts of the same sample while minimizing similarity among contexts of different samples. Experiments have been carried out on three real-world time-series datasets. The results manifest that training a linear classifier on top of the features learned by our proposed TS-TCC performs comparably with the supervised training. Additionally, our proposed TS-TCC shows high efficiency in few-labeled data and transfer learning scenarios. 
 
@@ -22,6 +19,7 @@ Learning decent representations from unlabeled time-series data with temporal dy
 - openpyxl (for classification reports)
 - mne=='0.20.7' (For Sleep-EDF preprocessing)
 - mat4py (for Fault diagnosis preprocessing)
+
 ## Datasets
 ### Download datasets
 > `Update:` You can now find the preprocessed datasets [on this Dataverse](https://researchdata.ntu.edu.sg/dataverse/tstcc/)
@@ -30,7 +28,6 @@ We used four public datasets in this study:
 - [Sleep-EDF](https://gist.github.com/emadeldeen24/a22691e36759934e53984289a94cb09b)
 - [HAR](https://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)  
 - [Epilepsy](https://archive.ics.uci.edu/ml/datasets/Epileptic+Seizure+Recognition) (this dataset is recently removed for some reason, so I uploaded the data file to the repo)
-- [Fault Diagnosis](https://mb.uni-paderborn.de/en/kat/main-research/datacenter/bearing-datacenter/data-sets-and-download)
 
 ### Preparing datasets
 The data should be in a separate folder called "data" inside the project folder.

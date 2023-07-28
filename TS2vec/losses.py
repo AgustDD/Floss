@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from dct_func import dct, p_fft
 
 
-def hierarchical_contrastive_loss(z1, z2, alpha=0.5, temporal_unit=0, beta=0.5, trans_type='dct'):
+def hierarchical_contrastive_loss(z1, z2, alpha=0.5, temporal_unit=0, beta=0.5, f_weight=1, trans_type='dct'):
     loss = torch.tensor(0., device=z1.device)
     d = 0
     while z1.size(1) > 1:
@@ -26,7 +26,7 @@ def hierarchical_contrastive_loss(z1, z2, alpha=0.5, temporal_unit=0, beta=0.5, 
         if alpha != 0:
             loss += alpha * instance_contrastive_loss(z1, z2)
         d += 1
-    return loss / d
+    return loss / d * f_weight
 
 
 def instance_contrastive_loss(z1, z2):

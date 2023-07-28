@@ -18,55 +18,28 @@
 
 ![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/model.png)
 
-## Results
+## Requirements
+- numpy
+- matplotlib
+- pandas
+- scikit-learn
+- torch==1.11.0
 
-### Supervised Learning
+## Datasets
 
-Compared with the best results that Transformer-based models can offer, PatchTST/64 achieves an overall **21.0%** reduction on MSE and **16.7%** reduction
-on MAE, while PatchTST/42 attains a overall **20.2%** reduction on MSE and **16.4%** reduction on MAE. It also outperforms other non-Transformer-based models like DLinear.
+You can download all the datasets from [Autoformer](https://drive.google.com/drive/folders/1ZOYpTUa82_jCcxIdTmyr0LXQfvaM9vIy). Create a seperate folder ```./data/dataset``` and put all the csv files in the directory.
 
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table3.png)
 
-### Self-supervised Learning
-
-We do comparison with other supervised and self-supervised models, and self-supervised PatchTST is able to outperform all the baselines. 
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table4.png)
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table6.png)
-
-We also test the capability of transfering the pre-trained model to downstream tasks.
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table5.png)
-
-## Efficiency on Long Look-back Windows
-
-Our PatchTST consistently <ins>reduces the MSE scores as the look-back window increases</ins>, which confirms our model’s capability to learn from longer receptive field.
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/varying_L.png)
+```
 
 ## Getting Started
-
-We seperate our codes for supervised learning and self-supervised learning into 2 folders: ```PatchTST_supervised``` and ```PatchTST_self_supervised```. Please choose the one that you want to work with.
-
-### Supervised Learning
-
-1. Install requirements. ```pip install -r requirements.txt```
-
-2. Download data. You can download all the datasets from [Autoformer](https://drive.google.com/drive/folders/1ZOYpTUa82_jCcxIdTmyr0LXQfvaM9vIy). Create a seperate folder ```./dataset``` and put all the csv files in the directory.
-
-3. Training. All the scripts are in the directory ```./scripts/PatchTST```. The default model is PatchTST/42. For example, if you want to get the multivariate forecasting results for weather dataset, just run the following command, and you can open ```./result.txt``` to see the results once the training is done:
-```
-sh ./scripts/PatchTST/weather.sh
-```
-
-You can adjust the hyperparameters based on your needs (e.g. different patch length, different look-back windows and prediction lengths.). We also provide codes for the baseline models.
 
 ### Self-supervised Learning
 
 1. Follow the first 2 steps above
 
 2. Pre-training: The scirpt patchtst_pretrain.py is to train the PatchTST/64. To run the code with a single GPU on ettm1, just run the following command
+   dest can be set to: `ettm1`, `ettm2`, `etth1`, `etth2`, `electricity`, `illness`, `weather`, `exchange`
 ```
 python patchtst_pretrain.py --dset ettm1 --mask_ratio 0.4
 ```

@@ -154,7 +154,6 @@ class Exp_Informer(Exp_Basic):
 
         model_optim = self._select_optimizer()
 
-        # criterion =  self._select_criterion()
         criterion =  self._select_criterion()
 
         if self.args.use_amp:
@@ -176,7 +175,7 @@ class Exp_Informer(Exp_Basic):
                 # Convert the tensors to lists
 
                # print("criterion, floss :", criterion(pred, true), floss, criterion(pred, true)/floss )
-                loss = criterion(pred, true) + floss*100
+                loss = criterion(pred, true) + floss
                 train_loss.append(loss.item())
 
                 if (i + 1) % 100 == 0:
