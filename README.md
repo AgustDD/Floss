@@ -114,21 +114,6 @@ def periogram_loss(z1, z2):
     o2 = z2.permute( [0, 2, 1])
     return torch.mean(torch.abs((p_fft(o1)) - (p_fft(o2))))
 
-def take_per_row(A, indx, num_elem):
-    all_indx = indx[:, None] + np.arange(num_elem)
-    return A[torch.arange(all_indx.shape[0])[:, None], all_indx]
-
-def context_sampling(x, temporal_unit):  #BxTxC
-    ts_l = x.size(1)
-    crop_l = np.random.randint(low=2 ** (temporal_unit + 1), high=ts_l + 1)
-    crop_left = np.random.randint(ts_l - crop_l + 1)
-    crop_right = crop_left + crop_l
-    crop_eleft = np.random.randint(crop_left + 1)
-    crop_eright = np.random.randint(low=crop_right, high=ts_l + 1)
-    crop_offset = np.random.randint(low=-crop_eleft, high=ts_l - crop_eright + 1, size=x.size(0))
-    input1 = take_per_row(x, crop_offset + crop_eleft, crop_right - crop_eleft)
-    input2 = take_per_row(x, crop_offset + crop_left, crop_eright - crop_left)
-    return input1, input2, crop_l
 
 ```
 In the hierarchical_contrastive_loss function, you can adjust the hyperparameters alpha, temporal_unit, beta, and f_weight to achieve the best performance. 
