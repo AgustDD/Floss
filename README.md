@@ -38,14 +38,15 @@ Specifically, in the TS_TCC and TS2vec, we first identify time series with perio
 
 ## Baselines
 
-We have conducted an evaluation of the Floss on four baseline models: Informer, PatchTST, TS2vec, and TFC_TCC. 
+We have conducted an evaluation of the Floss on four baseline models: Informer, PatchTST, TS2vec, and TS-TCC. 
 
 Please find detailed information on the implementation and setup of each baseline model in their respective folder's readme files. The baseline models' folders are as follows:
 
-1. Informer
-2. PatchTST
-3. TS2vec
-4. TS_TCC
+1. [Informer](./Informer)
+2. [PatchTST](./PatchTST)
+3. [TS2vec](./TS2vec)
+4. [TS-TCC](./TS_TCC).
+
 
 ## Code example
 
