@@ -33,7 +33,7 @@ By minimizing the loss function, the representations of the original and periodi
 
 By combining these three phases, our model effectively learns to encode the underlying periodicity of time series data in the representations, providing valuable insights into periodic behavior that can be applied to downstream tasks with improved accuracy and understanding.
 
-<!-- Specifically, in the TS_TCC and TS2vec, we first identify time series with periodic variations and then extract their representations. However, in the Informer and PatchTST baselines, we extract representations that capture periodic variations from the entire set of features.-->
+Specifically, in the TS_TCC and TS2vec, we first identify time series with periodic variations and then extract their representations. However, in the Informer and PatchTST baselines, we extract representations that capture periodic variations from the entire set of features.
 
 
 ## Baselines
