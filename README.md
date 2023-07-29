@@ -45,7 +45,7 @@ Please find detailed information on the implementation and setup of each baselin
 1. [Informer](./Informer)
 2. [PatchTST](./PatchTST)
 3. [TS2vec](./TS2vec)
-4. [TS-TCC](./TS_TCC).
+4. [TS-TCC](./TS_TCC)
 
 
 ## Code example
