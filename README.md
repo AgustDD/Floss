@@ -14,7 +14,7 @@ In our research, we address the problem of analyzing periodic time series data, 
 
 To represent the time series, we use a model $\mathcal{G}$ with parameters $\mathbf{\theta}$ to generate a representation tensor $\mathcal{Y} = \mathcal{G}(\mathcal{X}; \mathbf{\theta})$. The goal is to capture the underlying periodic nature of time series in these learned representations.
 
-To achieve this, we propose the Frequency Domain Loss (Floss). Floss consists of two main steps: periodicity detection and a novel loss objective. First, we detect the prominent periodicity $\hat{p}_{[t_1,t_2]}$ within each time series sampled from $\mathcal{X}_{[t_1,t_2]}$. Then, we create periodic views of the time series by shifting the data along the time axis.
+To achieve this, we propose the Frequency Domain Loss (Floss). Floss consists of two main steps: periodicity detection and a novel loss objective. First, we detect the prominent periodicity $\hat{p}{\left[t_1,t_2\right]}$ within each time series sampled from $\mathcal{X}{\left[t_1,t_2\right]}$. Then, we create periodic views of the time series by shifting the data along the time axis.
 
 The loss function $\mathcal{L}_f$ compares the power spectral density of the original and periodic views. However, to better capture information from all frequency components, we introduce a hierarchical frequency loss. We apply temporal max pooling to the learned representations $\mathcal{Y}$ and $\hat{\mathcal{Y}}$ and calculate the periodic invariance loss at multiple scales.
 
