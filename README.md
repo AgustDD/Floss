@@ -116,7 +116,7 @@ def periogram_loss(z1, z2):
 
 
 ```
-In the hierarchical_contrastive_loss function, you can adjust the hyperparameters alpha, temporal_unit, beta, and f_weight to achieve the best performance. 
+In the hierarchical_contrastive_loss function, you can adjust the hyperparameters alpha, beta, and f_weight to achieve the best performance. 
 
 ## Miscellaneous
 
