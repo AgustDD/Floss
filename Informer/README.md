@@ -13,11 +13,6 @@ This is the origin Pytorch implementation of Informer in the following paper:
 
 :triangular_flag_on_post:**News**(Feb 8, 2021): Our Informer paper has been awarded [AAAI'21 Best Paper \[Official\]](https://aaai.org/Conferences/AAAI-21/aaai-outstanding-and-distinguished-papers/)[\[Beihang\]](http://scse.buaa.edu.cn/info/1097/7443.htm)[\[Rutgers\]](https://www.business.rutgers.edu/news/hui-xiong-and-research-colleagues-receive-aaai-best-paper-award)! We will continue this line of research and update on this repo. Please star this repo and [cite](#citelink) our paper if you find our work is helpful for you.
 
-<p align="center">
-<img src=".\img\informer.png" height = "360" alt="" align=center />
-<br><br>
-<b>Figure 1.</b> The architecture of Informer.
-</p>
 
 ## ProbSparse Attention
 The self-attention scores form a long-tail distribution, where the "active" queries lie in the "head" scores and "lazy" queries lie in the "tail" area. We designed the ProbSparse Attention to select the "active" queries rather than the "lazy" queries. The ProbSparse Attention with Top-u queries forms a sparse Transformer by the probability distribution.
@@ -27,6 +22,7 @@ The self-attention scores form a long-tail distribution, where the "active" quer
 <br><br>
 <b>Figure 2.</b> The illustration of ProbSparse Attention.
 </p>
+
 
 ## Requirements
 
@@ -42,11 +38,9 @@ The self-attention scores form a long-tail distribution, where the "active" quer
 
 You can download all the datasets from [Autoformer](https://drive.google.com/drive/folders/1ZOYpTUa82_jCcxIdTmyr0LXQfvaM9vIy). Put all the csv files in the folder ```./data```.
 
-
 ```bash
 # ETTh1
 python -u main_informer.py --model informer --data ETTh1 --attn prob --freq h
-
 
 # ETTh2
 python -u main_informer.py --model informer --data ETTh2 --attn prob --freq h
@@ -153,8 +147,10 @@ If you find this repository useful in your research, please consider citing the 
 }
 ```
 
+
 ## Contact
 If you have any questions, feel free to contact Haoyi Zhou through Email (zhouhaoyi1991@gmail.com) or Github issues. Pull requests are highly welcomed!
+
 
 ## Acknowledgments
 Thanks for the computing infrastructure provided by Beijing Advanced Innovation Center for Big Data and Brain Computing ([BDBC](http://bdbc.buaa.edu.cn/)).
