@@ -102,7 +102,7 @@ def FFT_for_Period(x, k):
     _, top_list = torch.topk(frequency_list, k)
     top_list = top_list.detach().cpu().numpy()
     period_list = x.shape[1] // top_list
-    xf_abs = abs(xf)  # 对FFT结果取绝对值
-    freq_list = torch.mean(xf_abs, dim=(0, 2))  # 在最后一维上取平均值，得到每个频率的幅值
-    freq_list[0] = 0  # 去除直流分量
+    xf_abs = abs(xf)  
+    freq_list = torch.mean(xf_abs, dim=(0, 2)) 
+    freq_list[0] = 0 
     return period_list, freq_list
