@@ -52,6 +52,26 @@ Please find detailed information on the implementation and setup of each baselin
 
 ```python
 
+#Periodicity Detection
+def FFT_for_Period(x, k):
+    # [B, T, C]
+    xf = torch.fft.rfft(x, dim=1)
+    # find period by amplitudes
+    frequency_list = abs(xf).mean(0).mean(-1)
+    frequency_list[0] = 0
+    _, top_list = torch.topk(frequency_list, k)
+    top_list = top_list.detach().cpu().numpy()
+    period_list = x.shape[1] // top_list
+    xf_abs = abs(xf)  
+    freq_list = torch.mean(xf_abs, dim=(0, 2)) 
+    freq_list[0] = 0 
+    return period_list, freq_list
+
+```
+
+```python
+
+#Floss
 def hierarchical_contrastive_loss(z1, z2, alpha=0, k = 2, f_weight=1, temporal_unit=0, beta=0.5, trans_type='dct'):
     loss = torch.tensor(0., device=z1.device)
     d = 0
@@ -115,9 +135,9 @@ def periogram_loss(z1, z2):
     o2 = z2.permute( [0, 2, 1])
     return torch.mean(torch.abs((p_fft(o1)) - (p_fft(o2))))
 
-
 ```
 In the hierarchical_contrastive_loss function, you can adjust the hyperparameters alpha, beta, and f_weight to achieve the best performance. 
+
 
 ## Miscellaneous
 
