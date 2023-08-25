@@ -65,32 +65,33 @@ class Informer(nn.Module):
         # self.end_conv2 = nn.Conv1d(in_channels=d_model, out_channels=c_out, kernel_size=1, bias=True)
         self.projection = nn.Linear(d_model, c_out, bias=True)
         
+        
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, 
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
-        enc_out = self.enc_embedding(x_enc, x_mark_enc)
-        enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
 
         periodicity, freq_list = FFT_for_Period(x_enc, 1)
         periodicity = torch.from_numpy(np.array([periodicity]))
         periodicity = periodicity.item()
 
-        input1, input2, crop_l = context_sampling(enc_out, 0)
+        input1, input2, crop_l = context_sampling(x_enc, 0)
 
-        if input1.shape[1] - crop_l > periodicity and input2.shape[
-            1] - crop_l > periodicity and periodicity > 0:
+        if input1.shape[1] - crop_l > periodicity > 0 and input2.shape[
+            1] - crop_l > periodicity:
             period_move1 = np.random.randint(0, (input1.shape[1] - crop_l) // periodicity)
             period_move2 = np.random.randint(0, (input2.shape[1] - crop_l) // periodicity)
         else:
             period_move1 = 0
             period_move2 = 0
 
-
-        out1 = input1[:, -(crop_l + (period_move1 * periodicity)):]
+        enc_out1 = self.enc_embedding(input1, None)
+        enc_out1, attns1 = self.encoder(enc_out1, attn_mask=enc_self_mask)
+        enc_out2 = self.enc_embedding(input2, None)
+        enc_out2, attns2 = self.encoder(enc_out2, attn_mask=enc_self_mask)
+        out1 = enc_out1[:, -(crop_l + (period_move1 * periodicity)):]
         out1 = out1[:, -(crop_l):]
 
-        out2 = input2[:, (period_move2 * periodicity):crop_l + (period_move2 * periodicity)]
-        #print("out1:", out1.size())
-        #print("out2:", out2.size())
+        out2 = enc_out2[:, (period_move2 * periodicity):crop_l + (period_move2 * periodicity)]
+
         length_diff = out1.size(1) - out2.size(1)
 
         if length_diff > 0:
@@ -98,14 +99,14 @@ class Informer(nn.Module):
         elif length_diff < 0:
             out2 = out2[:, :out1.size(1)]
 
-
         assert out1.size(1) == out2.size(1)
 
         floss = hierarchical_contrastive_loss(
             out1,
             out2
         )
-
+        enc_out = self.enc_embedding(x_enc, x_mark_enc)
+        enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
         dec_out = self.projection(dec_out)
@@ -179,17 +180,15 @@ class InformerStack(nn.Module):
         # self.end_conv2 = nn.Conv1d(in_channels=d_model, out_channels=c_out, kernel_size=1, bias=True)
         self.projection = nn.Linear(d_model, c_out, bias=True)
         
+        
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, 
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
-
-        enc_out = self.enc_embedding(x_enc, x_mark_enc)
-        enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
 
         periodicity, freq_list = FFT_for_Period(x_enc, 1)
         periodicity = torch.from_numpy(np.array([periodicity]))
         periodicity = periodicity.item()
 
-        input1, input2, crop_l = context_sampling(enc_out, 0)
+        input1, input2, crop_l = context_sampling(x_enc, 0)
 
         if input1.shape[1] - crop_l > periodicity > 0 and input2.shape[
             1] - crop_l > periodicity:
@@ -199,12 +198,15 @@ class InformerStack(nn.Module):
             period_move1 = 0
             period_move2 = 0
 
-        out1 = input1[:, -(crop_l + (period_move1 * periodicity)):]
+        enc_out1 = self.enc_embedding(input1, None)
+        enc_out1, attns1 = self.encoder(enc_out1, attn_mask=enc_self_mask)
+        enc_out2 = self.enc_embedding(input2, None)
+        enc_out2, attns2 = self.encoder(enc_out2, attn_mask=enc_self_mask)
+        out1 = enc_out1[:, -(crop_l + (period_move1 * periodicity)):]
         out1 = out1[:, -(crop_l):]
 
-        out2 = input2[:, (period_move2 * periodicity):crop_l + (period_move2 * periodicity)]
-        # print("out1:", out1.size())
-        # print("out2:", out2.size())
+        out2 = enc_out2[:, (period_move2 * periodicity):crop_l + (period_move2 * periodicity)]
+
         length_diff = out1.size(1) - out2.size(1)
 
         if length_diff > 0:
@@ -218,7 +220,8 @@ class InformerStack(nn.Module):
             out1,
             out2
         )
-
+        enc_out = self.enc_embedding(x_enc, x_mark_enc)
+        enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
         dec_out = self.projection(dec_out)
