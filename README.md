@@ -37,7 +37,7 @@ By combining these three phases, our model effectively learns to encode the unde
 
 ## Baselines
 
-We have conducted an evaluation of the Floss on four baseline models: Informer, PatchTST, TS2vec, and TS-TCC. 
+We have conducted an evaluation of the Floss on seven baseline models: Informer, PatchTST, TS2vec, TS-TCC, Reformer, Transformer, FEDformer and TimesNet. 
 
 Please find detailed information on the implementation and setup of each baseline model in their respective folder's readme files. The baseline models' folders are as follows:
 
@@ -45,7 +45,7 @@ Please find detailed information on the implementation and setup of each baselin
 2. [PatchTST](./PatchTST)
 3. [TS2vec](./TS2vec)
 4. [TS-TCC](./TS_TCC)
-
+5. [Anomaly-Detection-Library](./Anomaly-Detection-Library)
 
 ## Code example
 
