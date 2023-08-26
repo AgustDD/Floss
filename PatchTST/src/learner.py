@@ -12,6 +12,7 @@ from .callback.core import *
 from .callback.tracking import * 
 from .callback.scheduler import *
 from .callback.distributed import *
+from .models.patchTST import PatchTSTEncoder
 from .utils import *
 from pathlib import Path
 from tqdm import tqdm
@@ -173,54 +174,67 @@ class Learner(GetAttr):
 
     def train_step(self, batch):
         # get the inputs
+        # bs x num_patch x nvars x patch_len
         self.xb, self.yb = batch
-        # get the periodicity
-        periodicity, freq_list = FFT_for_Period(self.xb, 1)
-
+        enc_out, pred = self.model_forward()
+        xb = self.xb
+        bs, num_patch, nvars, patch_len = xb.size()
+      
+        periodicity, freq_list = FFT_for_Period(torch.reshape(xb,(bs,num_patch,-1)), 1)
         periodicity = torch.from_numpy(np.array([periodicity]))
-
         periodicity = periodicity.item()
-        # forword
-        repre, pred = self.model_forward()
-        repre = torch.reshape(repre, (repre.size(0), repre.size(2) * repre.size(3), repre.size(1)))
-        input1, input2, crop_l = context_sampling(repre, 0)
-
-        if input1.shape[1] - crop_l > periodicity and input2.shape[
-            1] - crop_l > periodicity and periodicity > 0:
+       
+        input1, input2, crop_l = context_sampling(xb, 0)
+        if input1.shape[1] - crop_l > periodicity > 0 and input2.shape[
+            1] - crop_l > periodicity:
             period_move1 = np.random.randint(0, (input1.shape[1] - crop_l) // periodicity)
             period_move2 = np.random.randint(0, (input2.shape[1] - crop_l) // periodicity)
         else:
             period_move1 = 0
             period_move2 = 0
 
-        out1 = input1[:, -(crop_l + (period_move1 * periodicity)):]
+        input1= torch.nn.functional.pad(input1, (0,0,0,0,0,num_patch-input1.size(1)),value=0)
+        input2 = torch.nn.functional.pad(input2, (0,0,0,0,0,num_patch-input2.size(1)),value=0)
+
+        enc_out1, pred1 = self.model(input1)  #enc_out1: [bs x nvars x d_model x num_patch]
+        enc_out2, pred2 = self.model(input2)
+
+        enc_out1 = enc_out1.permute(0, 3, 1, 2)  # [bs x num_patch x nvars x d_model]
+        enc_out1 = torch.reshape(enc_out1, (enc_out1.size(0), enc_out1.size(1), -1))  # [bs x num_patch x (nvars * d_model)]
+        enc_out2 = enc_out2.permute(0, 3, 1, 2)
+        enc_out2 = torch.reshape(enc_out2, (enc_out2.size(0), enc_out2.size(1), -1)) 
+
+
+        out1 = enc_out1[:, -(crop_l + (period_move1 * periodicity)):]
         out1 = out1[:, -(crop_l):]
 
-        out2 = input2[:, (period_move2 * periodicity):crop_l + (period_move2 * periodicity)]
-        # print("out1:", out1.size())
-        # print("out2:", out2.size())
-        length_diff = out1.size(1) - out2.size(1)  # 计算长度差异
+        out2 = enc_out2[:, (period_move2*periodicity): crop_l +period_move2*periodicity]
 
+        length_diff = out1.size(1) - out2.size(1)
         if length_diff > 0:
-            # 如果 out1 的长度大于 out2，对 out1 进行切割
             out1 = out1[:, :out2.size(1)]
         elif length_diff < 0:
-            # 如果 out2 的长度大于 out1，对 out2 进行切割
             out2 = out2[:, :out1.size(1)]
+
+            out2 = out2[:, :out1.size(1)]
+
+
+        assert out1.size(1) == out2.size(1)
 
         floss = hierarchical_contrastive_loss(
             out1,
             out2
         )
-        loss = self.loss_func(pred, self.yb) + floss
+ 
+        loss = self.loss_func(pred, self.yb) + floss*0.01
 
         return pred, loss
 
     def model_forward(self):
         self('before_forward')
-        repre, self.pred = self.model(self.xb)
+        enc_out, self.pred = self.model(self.xb)
         self('after_forward')
-        return repre, self.pred
+        return enc_out, self.pred
 
     def _do_batch_validate(self):       
         # forward + calculate loss
@@ -230,7 +244,7 @@ class Learner(GetAttr):
         # get the inputs
         self.xb, self.yb = batch
         # forward
-        repre, pred = self.model_forward()
+        enc_out, pred = self.model_forward()
         # compute loss
         loss = self.loss_func(pred, self.yb)
         return pred, loss                                     
@@ -243,7 +257,7 @@ class Learner(GetAttr):
         # get the inputs
         self.xb, self.yb = batch
         # forward
-        repre, pred = self.model_forward()
+        enc_out, pred = self.model_forward()
         return pred 
     
     def _do_batch_test(self):   
@@ -253,7 +267,7 @@ class Learner(GetAttr):
         # get the inputs
         self.xb, self.yb = batch
         # forward
-        repre, pred = self.model_forward()
+        enc_out, pred = self.model_forward()
         return pred, self.yb
 
 
@@ -550,6 +564,3 @@ def get_layer_output(inp, model, layers=None, unwrap=False):
     h_list = [getattr(model, layer).register_forward_hook(getActivation(layer)) for layer in layers]
     
     model.eval()
-    out = orig_model(inp)    
-    for h in h_list: h.remove()
-    return activation

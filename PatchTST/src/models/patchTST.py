@@ -207,6 +207,7 @@ class PatchTSTEncoder(nn.Module):
         """
         x: tensor [bs x num_patch x nvars x patch_len]
         """
+        x=x.to(self.W_P.weight.device)
         bs, num_patch, n_vars, patch_len = x.shape
         # Input encoding
         if not self.shared_embedding:
