@@ -140,7 +140,7 @@ In the hierarchical_contrastive_loss function, you can adjust the hyperparameter
 
 ## Miscellaneous
 
-Please send any questions you might have about the code and/or the algorithm to <yangchunwei@stu.scu.edu.cn>. 
+Please send any questions you might have about the code and/or the algorithm to <yangchunwei@stu.scu.edu.cn> or <wuyk0@scu.edu.cn>. 
 
 
 ## License
